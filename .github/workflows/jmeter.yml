@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '11'
-          distribution:  'temurin'
+          distribution: 'temurin'
 
       - name: Install JMeter
         run: |
@@ -32,13 +32,24 @@ jobs:
           export JMETER_HOME=$(pwd)/apache-jmeter-5.6.3
           export PATH=$PATH:$JMETER_HOME/bin
 
-      - name: Run JMeter Test
+      - name: Run JMeter Test (JTL)
         run: |
-          mkdir -p results/Reports
-          ./apache-jmeter-5.6.3/bin/jmeter -n -t BlazeDemo_Test_Plan.jmx -l results/results.csv -e -o results/Reports
+          mkdir -p results_jtl/Reports
+          ./apache-jmeter-5.6.3/bin/jmeter -n -t BlazeDemo_Test_Plan.jmx -l results_jtl/results.jtl -e -o results_jtl/Reports
 
-      - name: Upload Reports
+      - name: Run JMeter Test (CSV)
+        run: |
+          mkdir -p results_csv/Reports
+          ./apache-jmeter-5.6.3/bin/jmeter -n -t BlazeDemo_Test_Plan.jmx -l results_csv/results.csv -e -o results_csv/Reports
+
+      - name: Upload JTL Reports
         uses: actions/upload-artifact@v4
         with:
-          name: jmeter-results
-          path: results/Reports
+          name: jmeter-results-jtl
+          path: results_jtl/Reports
+
+      - name: Upload CSV Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-results-csv
+          path: results_csv/Reports
